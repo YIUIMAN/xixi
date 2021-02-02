@@ -1,5 +1,8 @@
 <template>
     <view>
+        <view class="search-bar-box">
+            <my-search-bar @click="searchBarClickHandler"></my-search-bar>
+        </view>
         <!-- 轮播图区域 -->
         <swiper class="swiper" :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
             <swiper-item v-for="(i, idx) in swiperList" :key="idx">
@@ -52,6 +55,11 @@
             this.getList('floorList', '/home/floordata');
         },
         methods: {
+            searchBarClickHandler(){
+                uni.navigateTo({
+                    url: '/sub/search/search'
+                })
+            },
             async getList(name, partialUrl) {
                 const { data: res } = await uni.$http.get(partialUrl);
                 console.log(res);
@@ -91,6 +99,12 @@
 </script>
 
 <style lang="less">
+    .search-bar-box {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+    
     .swiper {
         height: 340rpx;
 

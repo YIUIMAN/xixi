@@ -1,23 +1,27 @@
 <template>
-    <view class="cate-container">
-        <scroll-view scroll-y="true">
-            <view :class="idx === active ? 'active' : undefined" v-for="(i, idx) in cateList" :key="i.cat_id" @click="oneChangeHandler(idx)">{{i.cat_name}}</view>
-        </scroll-view>
-        <scroll-view scroll-y="true" :scroll-top="scrollTop">
-            <view v-for="(i, idx) in secondList" :key="idx">
-                <!-- 标题（二级分类） -->
-                <view class="second-title"><text space="emsp">/ {{i.cat_name}} /</text></view>
-                <!-- 三级列表图片 -->
-                <view class="third-list">
-                    <view class="item" v-for="(i3, idx3) in i.children" :key="idx3" @click="goGoodsList(i3)">
-                        <!-- 小图片 -->
-                        <image :src="i3.cat_icon"></image>
-                        <!-- 小标题 -->
-                        <text>{{i3.cat_name}}</text>
+    <view class="">
+        <my-search-bar title="点我搜索更多" @click="searchBarClickHandler"></my-search-bar>
+        
+        <view class="cate-container">
+            <scroll-view scroll-y="true">
+                <view :class="idx === active ? 'active' : undefined" v-for="(i, idx) in cateList" :key="i.cat_id" @click="oneChangeHandler(idx)">{{i.cat_name}}</view>
+            </scroll-view>
+            <scroll-view scroll-y="true" :scroll-top="scrollTop">
+                <view v-for="(i, idx) in secondList" :key="idx">
+                    <!-- 标题（二级分类） -->
+                    <view class="second-title"><text space="emsp">/ {{i.cat_name}} /</text></view>
+                    <!-- 三级列表图片 -->
+                    <view class="third-list">
+                        <view class="item" v-for="(i3, idx3) in i.children" :key="idx3" @click="goGoodsList(i3)">
+                            <!-- 小图片 -->
+                            <image :src="i3.cat_icon"></image>
+                            <!-- 小标题 -->
+                            <text>{{i3.cat_name}}</text>
+                        </view>
                     </view>
                 </view>
-            </view>
-        </scroll-view>
+            </scroll-view>
+        </view>
     </view>
 </template>
 
@@ -50,6 +54,11 @@
                     url: '/sub/goods_list/goods_list?cid=' + cat_id
                 })
             },
+            searchBarClickHandler(){
+                uni.navigateTo({
+                    url: '/sub/search/search'
+                })
+            },
             async getCateList() {
                 const {
                     data: res
@@ -66,7 +75,7 @@
         display: flex;
 
         scroll-view {
-            height: 100vh;
+            height: calc(100vh - 50px);
 
             &:first-child {
                 width: 120px;

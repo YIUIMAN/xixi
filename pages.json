@@ -28,7 +28,16 @@
                 "navigationBarTitleText": "商品详情",
                 "enablePullDownRefresh": false
             }
-        }]
+        }    ,{
+                    "path" : "goods_list/goods_list",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
     }],
     "tabBar": {
         "color": "#666",

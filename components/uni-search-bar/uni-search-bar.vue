@@ -78,7 +78,11 @@
 			maxlength: {
 				type: [Number, String],
 				default: 100
-			}
+			},
+            focus: {
+                type: Boolean,
+                default: false
+            }
 		},
 		data() {
 			return {
@@ -87,6 +91,9 @@
 				searchVal: ""
 			}
 		},
+        mounted() {
+            this.show = this.showSync = this.focus;
+        },
 		watch: {
 			searchVal() {
 				this.$emit("input", {
@@ -95,6 +102,9 @@
 			}
 		},
 		methods: {
+            setText(value){
+                this.searchVal = value;
+            },
 			searchClick() {
 				if (this.show) {
 					return

@@ -1,5 +1,5 @@
 <template>
-    <view class="goods-container" v-if="detailInfo.goods_price">
+    <view class="goods-container" v-if="detailInfo.goods_name">
         <!-- 轮播图区域 -->
         <swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
             <swiper-item v-for="(i, idx) in previewImageList" :key="idx">
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+    import { mapState, mapMutations, mapGetters } from 'vuex';
+    
     export default {
         data() {
             return {
@@ -43,7 +45,7 @@
                 options: [{
                     icon: 'cart',
                     text: '购物车',
-                    info: 2
+                    info: 0
                 }],
                 buttonGroup: [{
                         text: '加入购物车',
@@ -53,7 +55,17 @@
                 ]
             };
         },
+        watch:{
+            total: {
+                handler(count) {
+                    this.options[0].info = count;
+                },
+                immediate: true
+            }
+        },
         computed: {
+            ...mapState('m_cart', ['cart']),
+            ...mapGetters('m_cart', ['total']),
             previewImageList() {
                 return (this.detailInfo.pics || []).map(i => i.pics_big_url);
             }
@@ -72,6 +84,7 @@
             this.getGoodsDetail(id);
         },
         methods: {
+            ...mapMutations('m_cart', ['addToCart']),
             // 请求数据的方法。
             async getGoodsDetail(id) {
                 const {
@@ -93,6 +106,19 @@
                         uni.switchTab({
                             url: '/pages/cart/cart'
                         });
+                        break;
+                    default:
+                        break;
+                }
+            },
+            buttonClick({ index }){
+                switch (index) {
+                    case 0:
+                        // 拆解商品信息。
+                        const { goods_id, goods_name, goods_price, goods_small_logo } = this.detailInfo;
+                        
+                        // 添加到购物车。
+                        this.addToCart({ goods_id, goods_name, goods_price, goods_small_logo });
                         break;
                     default:
                         break;

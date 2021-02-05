@@ -26,7 +26,10 @@
 </template>
 
 <script>
+    import mixCart from '../../mixins/mixCart'
+    
     export default {
+        mixins: [mixCart],
         data() {
             return {
                 active: 0,

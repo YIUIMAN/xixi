@@ -3,6 +3,7 @@ import App from './App'
 import {
     API
 } from './utils/api'
+import store from './store/store'
 
 Vue.config.productionTip = false
 
@@ -15,6 +16,6 @@ uni.$http = new API(
 App.mpType = 'app'
 
 const app = new Vue({
-    ...App
+    ...App, store
 })
 app.$mount()

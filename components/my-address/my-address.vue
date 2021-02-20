@@ -1,7 +1,7 @@
 <template>
 	<view>
         <!-- 收货信息区域 -->
-        <view v-if="address" class="address-box">
+        <view v-if="address" class="address-box" @click="chooseAddress">
             <uni-icons type="location" size="18"></uni-icons>
             <view class="info">
                 <view>
@@ -17,7 +17,7 @@
         
         <!-- 选择收货地址 -->
         <view v-else class="address-choose">
-            <button type="primary" size="mini" @click="chooseAddress">请选择收货地址 +</button>
+            <button type="primary" size="mini" @click="chooseAddress">{{auth ? '请选择收货地址 +' : '请到设置面板打开[通讯地址]'}}</button>
         </view>
         
         
@@ -28,40 +28,43 @@
 </template>
 
 <script>
-    import { mapState, mapMutations } from 'vuex'
+    import { mapState, mapMutations, mapGetters } from 'vuex'
     
 	export default {
 		data() {
 			return {
+                auth: true
 				// address: null
 			};
 		},
         computed: {
             ...mapState('m_user', ['address']),
-            addressText(){
-                let text = '';
-                
-                if (this.address) {
-                    // 先取数据，改名。
-                    const { provinceName: p, cityName: c, countyName: a, detailInfo: d } = this.address;
-                    
-                    text = `${p} ${c} ${a} ${d}`;
-                }
-                
-                return text;
-            }
+            ...mapGetters('m_user', ['addressText'])
         },
         methods: {
             ...mapMutations('m_user', ['setAddress']),
             async chooseAddress() {
-                const [err, info] = await uni.chooseAddress();
-                
-                if (info) {
-                    // this.address = info;
-                    this.setAddress(info)
-                    console.log(this.address)
-                } else {
+                if (this.auth) {
+                    const [err, info] = await uni.chooseAddress();
                     
+                    if (info) {
+                        // this.address = info;
+                        this.setAddress(info)
+                        console.log(this.address)
+                    } else if (err && err.errMsg.includes('fail auth')) {
+                        uni.showToast({
+                            title: '请先打开通讯地址的权限',
+                            icon: 'none'
+                        })
+                        this.auth = false;
+                    }
+                } else {
+                    uni.openSetting({
+                        success: res => {
+                            this.auth = res.authSetting['scope.address'] // true | false  -> auth
+                            // this.auth = true
+                        }
+                    })
                 }
             }
         }

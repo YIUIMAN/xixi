@@ -54,11 +54,11 @@
 		},
 		watch: {
 			value(val) {
-				this.inputValue = +val;
+				this.inputValue = +val || 1;
 			},
 			inputValue(newVal, oldVal) {
 				if (+newVal !== +oldVal) {
-					this.$emit("change", newVal);
+					this.$emit("change", parseInt(newVal) || 1);
 				}
 			}
 		},
@@ -102,7 +102,7 @@
 				return scale;
 			},
 			_onBlur(event) {
-				let value = event.detail.value;
+				let value = parseInt(event.detail.value || this.inputValue) || 1;
 				if (!value) {
 					// this.inputValue = 0;
 					return;

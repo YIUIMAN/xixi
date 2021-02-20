@@ -1,6 +1,7 @@
 <template>
 	<view class="goods-item" @click="goodsClickHandler">
 	    <view class="image-box">
+            <radio v-if="showRadio" color="#d81e06" :checked="goods.checked" @click="radioChangeHandler"></radio>
 	        <image :src="goods.goods_small_logo || '/static/no-image.png'"></image>
 	    </view>
 	    <view class="info-box">
@@ -8,7 +9,8 @@
 	            {{goods.goods_name}}
 	        </view>
 	        <view class="price">
-	            ￥{{goods.goods_price | money}}
+	            <text class="price-value">￥{{goods.goods_price | money}}</text>
+                <uni-number-box v-if="showCount" :min="1" :value="goods.count" @change="numberChangeHandler"></uni-number-box>
 	        </view>
 	    </view>
 	</view>
@@ -20,6 +22,16 @@
             goods: {
                 type: Object,
                 default: {}
+            },
+            // 外界使用 show-radio
+            showRadio: {
+                type: Boolean,
+                default: false
+            },
+            // 外界使用 show-count
+            showCount: {
+                type: Boolean,
+                default: false
             }
         },
 		data() {
@@ -35,6 +47,16 @@
         methods: {
             goodsClickHandler(){
                 this.$emit('click')
+            },
+            radioChangeHandler(){
+                const { goods_id: id, checked } = this.goods;
+                
+                this.$emit('check-change', { id, checked: !checked });
+            },
+            numberChangeHandler(count) {
+                const { goods_id: id } = this.goods;
+                
+                this.$emit('count-change', { id, count: + count })
             }
         }
 	}
@@ -47,6 +69,9 @@
         padding: 10px;
         border-bottom: 1px solid #eee;
         .image-box {
+            display: flex;
+            align-items: center;
+            
             image {
                 width: 100px;
                 height: 100px;
@@ -58,13 +83,20 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            flex-grow: 1;
             
             .name {
                 font-size: 13px;
             }
             
             .price {
-                color: #f00;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                
+                text.price-value {
+                    color: #f00;
+                }
             }
         }
     }
